@@ -1,0 +1,9 @@
+# Local configurations
+.idea/
+.DS_Store
+codealike.json
+
+# Project ignorables
+*.log
+dist/
+node_modules/

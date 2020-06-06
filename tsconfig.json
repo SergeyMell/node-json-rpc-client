@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "typeRoots": [
+    "./node_modules/@types"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "node_modules/*",
+    "dist"
+  ]
+}
