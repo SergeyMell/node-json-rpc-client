@@ -9,65 +9,60 @@ export abstract class AbstractSocketClient {
     protected port: number;
     protected host: string;
 
-    protected abstract client: Socket | TLSSocket;
+    protected abstract initClient(): Socket | TLSSocket;
 
     protected constructor(port: number, host: string) {
         this.port = port;
         this.host = host;
     }
 
-    private get connection(): Observable<void> {
+    private get connection(): Observable<Socket | TLSSocket> {
+        const socket = this.initClient();
         return new Observable(observer => {
-            const errorHandler = (e) => observer.error(e);
 
-            this.client.on('close', () => {
+            socket.on('close', () => {
+                console.log('closed');
+                socket.removeAllListeners();
                 observer.complete();
             });
-
-            this.client.on('error', err => {
+            socket.on('error', err => {
+                socket.removeAllListeners();
                 observer.error(err);
             });
 
-            this.client.connect(
+            socket.connect(
                 this.port, this.host,
                 () => {
-                    this.client.removeListener('error', errorHandler);
-                    observer.next();
+                    console.log('connecting');
+                    observer.next(socket);
                     observer.complete();
                 }
             );
-
-            this.client.on('error', errorHandler)
         });
     }
 
     request(method: string, params = [], id = 1): Observable<any> {
         const data = jsonRpcStructure(method, params, id);
-
-        const request = new Observable(observer => {
-
-            this.client.write(data, err => {
-                    if (err) {
-                        observer.error(err);
-                    }
-                }
-            );
-
-            this.client.on('data', (data) => {
-                observer.next(data.toString());
-            });
-
-            observer.add(() => {
-                console.log('ending');
-                this.client.removeAllListeners();
-                this.client.end();
-            });
-
-        });
-
         return this.connection
-            .pipe(switchMap(() => request));
+            .pipe(
+                switchMap(socket => {
+                    return new Observable(observer => {
+                        socket.write(data, err => {
+                                if (err) {
+                                    observer.error(err);
+                                }
+                            }
+                        );
+                        socket.on('data', data => observer.next(data.toString()));
 
+                        observer.add(() => {
+                            console.log('ending');
+                            socket.end();
+                            socket.destroy();
+                        });
+                    })
+                })
+            )
     }
 
 }

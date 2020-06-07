@@ -3,8 +3,10 @@ import {AbstractSocketClient} from '../abstract-socket-client';
 
 export class SslClient extends AbstractSocketClient {
 
-    // @ts-ignore
-    protected client = new TLSSocket();
+    protected initClient(): TLSSocket {
+        // @ts-ignore
+        return new TLSSocket();
+    }
 
     constructor(port: number, host: string) {
         super(port, host);
