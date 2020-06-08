@@ -1,1 +1,1 @@
-export type Connection = 'tcp' | 'ssl';
+export type Connection = 'tcp' | 'ssl' | 'tls';

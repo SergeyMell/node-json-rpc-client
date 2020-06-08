@@ -1,1 +1,1 @@
-export {JSONRpcClient} from './json-rpc-client'
+export {JSONRpc} from './json-rpc-client'

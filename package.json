@@ -1,7 +1,7 @@
 {
   "name": "@agilie/json-rpc-client",
   "version": "0.0.1",
-  "description": "Observeable based JSON RPC v2 client for all types of connections",
+  "description": "Observable based JSON RPC v2 client for all types of connections",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
